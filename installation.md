@@ -15,15 +15,23 @@ git clone https://github.com/jamesjg/FoodSAM.git
 ```
 b. Create a conda virtual environment and activate it
 ```
-conda create -n FoodSAM python=3.7 -y
+conda create -n FoodSAM python=3.9 -y 
+
+OR 
+
+conda create -n FoodSAM python=3.7 -y 
 conda activate FoodSAM
 ```
 c. Install PyTorch and torchvision following the [official instructions](https://pytorch.org/). Here we use PyTorch 1.8.1 and CUDA 11.1. You may also switch to another version by specifying the version number.
 ```
-pip install torch==1.8.1+cu111 torchvision==0.9.1+cu111 torchaudio==0.8.1 -f https://download.pytorch.org/whl/torch_stable.html
+pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128 (If window 11 and > CUDA 12.)
+
+pip install torch==1.8.1+cu111 torchvision==0.9.1+cu111 torchaudio==0.8.1 -f https://download.pytorch.org/whl/torch_stable.html (IF < window 11)
 ```
 d. Install MMCV following the [official instructions](https://mmcv.readthedocs.io/en/latest/#installation). 
 ```
+pip install mmcv-full -f https://download.openmmlab.com/mmcv/dist/cu121/torch2.1/index.html (if > CUDA 12.)
+
 pip install mmcv-full==1.3.0 -f https://download.openmmlab.com/mmcv/dist/cu110/torch1.8.0/index.html
 ```
 e. Install SAM following official [SAM installation](https://github.com/facebookresearch/segment-anything).
