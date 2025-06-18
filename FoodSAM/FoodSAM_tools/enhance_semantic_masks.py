@@ -81,7 +81,12 @@ def enhance_masks(data_folder, category_txt, color_list_path, num_class=104, are
                   enhance_mask_name='enhance_mask.png',
                   enhance_mask_vis_name='enhance_vis.png',
                   sam_mask_label_file_dir='sam_mask_label'):
-        
+    
+    num_class = int(num_class)
+    area_thr = float(area_thr)
+    ratio_thr = float(ratio_thr)
+    top_k = int(top_k)
+
     predict_sam_label([data_folder], category_txt, masks_path_name, new_mask_label_file_name, pred_mask_file_name, sam_mask_label_file_dir)
     color_list = np.load(color_list_path)
     color_list[0] = [238, 239, 20]
@@ -132,3 +137,4 @@ def enhance_masks(data_folder, category_txt, color_list_path, num_class=104, are
             enhanced_mask[sam_mask] = label
         cv2.imwrite(save_path, enhanced_mask)
         visualization_save(enhanced_mask, vis_save_path, img_path, color_list)
+        category_info = category_info[:top_k]

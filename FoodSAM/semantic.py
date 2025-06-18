@@ -1,7 +1,7 @@
 import sys
 # sys.path.append('.')
 # sys.path.append('./SAM')
-# sys.path.append('./mmseg')
+# sys.path.append('./mmseg')python FoodSAM/semantic.py 
 import argparse
 import torch.nn as nn
 import cv2
@@ -19,6 +19,9 @@ from FoodSAM_tools.predict_semantic_mask import semantic_predict
 from FoodSAM_tools.enhance_semantic_masks import enhance_masks
 from FoodSAM_tools.evaluate_foodseg103 import evaluate
 
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+sys.path.append(parent_dir)
 
 def convert_syncbn(model):
     for name, module in model.named_children():
@@ -106,19 +109,27 @@ parser.add_argument(
 )
 parser.add_argument(
     "--num_class",
-    default=104, help='the total number of classes including background'
+    type=int,
+    default=104,
+    help='the total number of classes including background'
 )
 parser.add_argument(
     "--area_thr",
-    default=0 , help='the area threshold used to enhance masks'
+    type=float,  # Change to float
+    default=0.0,
+    help='the area threshold used to enhance masks'
 )
 parser.add_argument(
     "--ratio_thr",
-    default=0.5, help='the ratio threshold used to enhance masks'
+    type=float,  # Change to float
+    default=0.5,
+    help='the ratio threshold used to enhance masks'
 )
 parser.add_argument(
     "--top_k",
-    default=80, help='only the top k SAM masks sorted by SAM will be kept. '
+    type=int,  # Change to int
+    default=80,
+    help='only the top k SAM masks sorted by SAM will be kept.'
 )
 
 parser.add_argument(
@@ -188,7 +199,7 @@ amg_settings.add_argument(
 
 amg_settings.add_argument(
     "--crop-overlap-ratio",
-    type=int,
+    type=float,
     default=None,
     help="Larger numbers mean image crops will overlap more.",
 )
@@ -278,23 +289,44 @@ def create_logger(save_folder):
 
 
 def save_detected_categories(category_txt_path, output_folder, output_filename="detected_categories.txt"):
-    import os
-    categories = set()
-    output_path = os.path.join(output_folder, output_filename)
-    if os.path.exists(output_path):
-        print(f"{output_path} already exists. Skipping creation.")
-        return
-    with open(category_txt_path, "r", encoding="utf-8") as f:
-        for line in f:
-            parts = line.strip().split(",")
-            if len(parts) < 3:
-                continue
-            cat_name = parts[2]
-            if cat_name != "background" and cat_name != "category_name":
-                categories.add(cat_name)
-    with open(output_path, "w", encoding="utf-8") as f:
-        for cat in sorted(categories):
-            f.write(cat + "\n")
+    # import os
+    # categories = set()
+    # output_path = os.path.join(output_folder, output_filename)
+    # if os.path.exists(output_path):
+    #     print(f"{output_path} already exists. Skipping creation.")
+    #     return
+    # with open(category_txt_path, "r", encoding="utf-8") as f:
+    #     for line in f:
+    #         parts = line.strip().split(",")
+    #         if len(parts) < 3:
+    #             continue
+    #         cat_name = parts[2]
+    #         if cat_name != "background" and cat_name != "category_name":
+    #             categories.add(cat_name)
+    # with open(output_path, "w", encoding="utf-8") as f:
+    #     for cat in sorted(categories):
+    #         f.write(cat + "\n")
+    try:
+        # Get the category mapping from the original foodseg103 file
+        category_file = "FoodSAM/FoodSAM_tools/category_id_files/foodseg103_category_id.txt"
+        categories = set()
+        
+        with open(category_file, "r", encoding="utf-8") as f:
+            for line in f:
+                parts = line.strip().split()  # Split by whitespace
+                if len(parts) >= 2:  # Make sure we have at least ID and name
+                    cat_name = " ".join(parts[1:])  # Category name might contain spaces
+                    if cat_name.lower() != "background":
+                        categories.add(cat_name)
+        
+        # Save to output file
+        output_path = os.path.join(output_folder, output_filename)
+        with open(output_path, "w", encoding="utf-8") as f:
+            for cat in sorted(categories):
+                f.write(cat + "\n")
+                
+    except Exception as e:
+        print(f"Error saving categories: {str(e)}")
 
 def main(args: argparse.Namespace) -> None:
     if os.path.exists(args.output):
@@ -354,11 +386,14 @@ def main(args: argparse.Namespace) -> None:
     enhance_masks(args.output, args.category_txt, args.color_list_path, num_class=args.num_class, area_thr=args.area_thr, ratio_thr=args.ratio_thr, top_k=args.top_k)
     logger.info("enhance semantic masks done!\n")
 
+    # save_detected_categories(
+    #     category_txt_path="Output/Semantic_Results/test/sam_mask_label/semantic_masks_category.txt",
+    #     output_folder=args.output
+    # )
     save_detected_categories(
-        category_txt_path="Output/Semantic_Results/test/sam_mask_label/semantic_masks_category.txt",
+        category_txt_path="FoodSAM/FoodSAM_tools/category_id_files/foodseg103_category_id.txt",
         output_folder=args.output
     )
-   
 
     if args.eval and not args.img_path:
         ann_folder = os.path.join(args.data_root, args.ann_dir)
