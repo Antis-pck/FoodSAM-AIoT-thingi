@@ -4,3 +4,5 @@ ckpts/SETR_MLA/*
 !ckpts/SETR_MLA/.gitkeep
 ckpts/*
 dataset/
+venv
+result

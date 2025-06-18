@@ -40,7 +40,7 @@ pip install git+https://github.com/facebookresearch/segment-anything.git@6fdee8f
 ```
 f. other requirements
 ```
-pip install -r requirement.txt
+pip install -r requirements.txt
 ```
 
 e. Finally download three checkpoints, and move them to "ckpts/" folder as described.
