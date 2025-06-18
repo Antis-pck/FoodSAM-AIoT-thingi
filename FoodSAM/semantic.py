@@ -339,7 +339,7 @@ def main(args: argparse.Namespace) -> None:
     else:
         os.makedirs(args.output, exist_ok=True)
 
-    args.device = "cpu" 
+    # args.device = "cuda" if torch.cuda.is_available() else "cpu"
     os.makedirs(args.output, exist_ok=True)
     logger = create_logger(args.output)
     logger.info("running sam!")

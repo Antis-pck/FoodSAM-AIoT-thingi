@@ -17,6 +17,7 @@ model = dict(
         align_corners=False,
         mla_channels=256,
         mla_index=(5, 7, 9, 11)),
+        pretrained=None, 
     decode_head=dict(
         type='VIT_MLAHead',
         in_channels=1024,
