@@ -12,20 +12,20 @@ a. Clone the repository locally:
 
 ```
 git clone https://github.com/jamesjg/FoodSAM.git
+
 ```
 b. Create a conda virtual environment and activate it
 ```
-conda create -n FoodSAM python=3.9 -y 
+conda create -n FoodSAM python=3.7 -y
 
-OR 
-
-conda create -n FoodSAM python=3.7 -y 
 conda activate FoodSAM
 ```
 c. Install PyTorch and torchvision following the [official instructions](https://pytorch.org/). Here we use PyTorch 1.8.1 and CUDA 11.1. You may also switch to another version by specifying the version number.
+
 ```
 pip install torch==1.8.1+cu111 torchvision==0.9.1+cu111 torchaudio==0.8.1 -f https://download.pytorch.org/whl/torch_stable.html 
 ```
+
 d. Install MMCV following the [official instructions](https://mmcv.readthedocs.io/en/latest/#installation). 
 ```
 pip install mmcv-full==1.3.0 -f https://download.openmmlab.com/mmcv/dist/cu110/torch1.8.0/index.html
@@ -35,6 +35,7 @@ e. Install SAM following official [SAM installation](https://github.com/facebook
 pip install git+https://github.com/facebookresearch/segment-anything.git@6fdee8f
 ```
 f. other requirements
+
 ```
 pip install -r requirements.txt
 ```
@@ -48,6 +49,11 @@ e. Finally download three checkpoints, and move them to "ckpts/" folder as descr
 [UNIDET-Unified_learned_OCIM_RS200_6x+2x](https://drive.google.com/file/d/1HvUv399Vie69dIOQX0gnjkCM0JUI9dqI/edit)
 
 If the above links are not working, you also can download them in [Baidu Disk](https://pan.baidu.com/s/1o1w_Vejrtd7rvWVorSQZfg?pwd=pyyk) (code:`pyyk`).
+
+OR
+
+[Google Drive](https://drive.google.com/drive/folders/1rSI-PZbvZ4OLA99P6kj0YpRHCfSy90Ct?usp=sharing)
+
 
 ## Dataset and configs
 For UNIDET and FoodSeg103, the configs are already put into the [configs](configs/) folder. 

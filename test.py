@@ -32,7 +32,7 @@ def run_semantic_script():
         cmd = [
             'python', 
             'FoodSAM/semantic.py',
-            '--device', 'cpu',
+            '--device', 'cuda',
             '--data_root', 'dataset',
             '--img_dir', 'FoodSeg103/Images/img_dir/test',
             '--output', 'Output/Semantic_Results',
@@ -43,13 +43,12 @@ def run_semantic_script():
             '--category_txt', 'FoodSAM/FoodSAM_tools/category_id_files/foodseg103_category_id.txt',
             '--color_list_path', 'FoodSAM/FoodSAM_tools/color_list.npy',
             '--num_class', '104',
-            '--area_thr', '0.0',  # Changed to float string
+            '--area_thr', '0.0', 
             '--ratio_thr', '0.5',
-            '--top_k', '80'  # Keep as string, will be converted by argparse
+            '--top_k', '80'  
         ]
         
-        # Only add SAM settings if they're needed
-        if True:  # You can add a condition here if needed
+        if True:  
             sam_settings = [
                 '--points-per-side', '32',
                 '--points-per-batch', '64',
@@ -65,69 +64,64 @@ def run_semantic_script():
             ]
             cmd.extend(sam_settings)
 
-        # Run the command
         result = subprocess.run(
             cmd,
             capture_output=True,
             text=True,
             check=True,
-            cwd=os.path.abspath(os.path.dirname(__file__))
+            cwd=os.path.abspath(os.path.dirname(_file_))
         )
         
-        # Print output for debugging
+        log_output = ""
         if result.stdout:
-            st.text(result.stdout)
+            log_output += result.stdout
         if result.stderr:
-            st.text(result.stderr)
-            
-        return True
+            log_output += "\n" + result.stderr
+
+        return True, log_output
         
     except subprocess.CalledProcessError as e:
-        st.error(f"Error running semantic.py: {str(e)}")
+        log_output = f"Error running semantic.py: {str(e)}"
         if e.stdout:
-            st.text(e.stdout)
+            log_output += "\n" + e.stdout
         if e.stderr:
-            st.text(e.stderr)
-        return False
+            log_output += "\n" + e.stderr
+        return False, log_output
     
 def read_detected_categories():
     """Read and return actually detected categories from the semantic masks file"""
     try:
-        # Read from the semantic masks category file which contains actual detections
         mask_label_file = os.path.join('Output', 'Semantic_Results', 'test', 'sam_mask_label', 'semantic_masks_category.txt')
         if os.path.exists(mask_label_file):
-            detected = set()  # Use set to avoid duplicates
+            detected = set() 
             with open(mask_label_file, 'r', encoding='utf-8') as f:
-                next(f)  # Skip header line
+                next(f) 
                 for line in f:
                     parts = line.strip().split(',')
-                    if len(parts) >= 3:  # Make sure we have enough parts
+                    if len(parts) >= 3:  
                         category_name = parts[2].strip()
-                        confidence = float(parts[3])  # Category confidence
-                        area = float(parts[4])  # Area ratio
+                        confidence = float(parts[3])  
+                        area = float(parts[4])
                         
-                        # Only include non-background categories with sufficient confidence
                         if (category_name.lower() != 'background' and 
-                            confidence > 0.5 and  # Confidence threshold
-                            area > 0.001):      # Area threshold
+                            confidence > 0.5 and  
+                            area > 0.001):      
                             detected.add(category_name)
-            
-            # Return sorted list of unique detected categories
+
             return sorted(list(detected))
     except Exception as e:
         st.error(f"Error reading categories: {str(e)}")
     return []
 
 def main():
-    st.title("FoodSAM - Food Ingredient Detection")
+    st.title("Food Ingredient Classifier")
     
     img_dir = setup_image_directory()
     
     uploaded_file = st.file_uploader(
-        "Upload a food image", 
-        type=["jpg", "jpeg", "png"]
+        "Upload a food image - JPG format preferred", 
+        type=["jpg"]
     )
-
 
     if uploaded_file is not None:
         try:
@@ -139,13 +133,13 @@ def main():
 
                 if st.button("Process Image"):
                     with st.spinner("Processing image with FoodSAM..."):
-                        if run_semantic_script():
-                            time.sleep(2)  # Give more time for file operations
+                        success, log_output = run_semantic_script()
+                        if success:
+                            time.sleep(2) 
                             
                             # Display results
                             output_dir = 'Output/Semantic_Results'
                             if os.path.exists(output_dir):
-                                # Show processed image
                                 result_img = os.path.join(output_dir, 'enhance_vis.png')
                                 if os.path.exists(result_img):
                                     st.write("### Detection Results")
@@ -164,8 +158,12 @@ def main():
                         else:
                             st.error("Failed to process image.")
 
+                        # Log output in an expander (collapsible tab)
+                        with st.expander("Output", expanded=False):
+                            st.text(log_output)
+
         except Exception as e:
             st.error(f"Error: {str(e)}")
 
-if __name__ == "__main__":
-    main()  
+if _name_ == "_main_":
+    main()
