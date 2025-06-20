@@ -20,13 +20,13 @@ conda create -n FoodSAM python=3.7 -y
 
 conda activate FoodSAM
 ```
-c. Install PyTorch and torchvision following the [official instructions](https://pytorch.org/). Here we use PyTorch 1.8.1 and CUDA 11.1. You may also switch to another version by specifying the version number.
+c. Install PyTorch and torchvision following the [official instructions](https://pytorch.org/). Here we use PyTorch 1.8.1 and [CUDA 11.1.](https://developer.nvidia.com/cuda-11.1.0-download-archive) You may also switch to another version by specifying the version number.
 
 ```
 pip install torch==1.8.1+cu111 torchvision==0.9.1+cu111 torchaudio==0.8.1 -f https://download.pytorch.org/whl/torch_stable.html 
 ```
 
-d. Install MMCV following the [official instructions](https://mmcv.readthedocs.io/en/latest/#installation). 
+d. Install MMCV following the [official instructions](https://mmcv.readthedocs.io/en/latest/#installation).  
 ```
 pip install mmcv-full==1.3.0 -f https://download.openmmlab.com/mmcv/dist/cu110/torch1.8.0/index.html
 ```
